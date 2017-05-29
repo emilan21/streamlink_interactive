@@ -1,0 +1,2 @@
+streamlink -o /mnt/main_storage/torrent/hcjustin_battle.mp4 --hls-segment-threads 8 https://www.twitch.tv/videos/133486437 source
+

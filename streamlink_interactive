@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# streamlink_interactive - Script takes in stream urls for input. Then uses streamlink to download the vod
+
+function usage {
+
+	echo 'Usage: streamlink_interactive -tdsf'
+	echo '-t = thread count. Default is 8'
+	echo '-d = Directory'
+	echo '-s = source level. Default is source'
+	echo '-f = source file with urls'
+	echo '-o = destination filename'
+	echo '-u = url'
+}
+
+path="/mnt/main_storage/torrent/"
+thread_count=8
+source_level="source"
+src_file_name=""
+des_file_name=""
+url=""
+count=0
+
+while getopts "ht:d:s:f:o:u:" opt; do
+	case $opt in
+		h)
+			usage
+			;;
+		t)
+			thread_count=$OPTARG
+			;;
+		d)
+			path=$OPTARG
+			;;
+		s)
+			source_level=$OPTARG
+			;;
+		o)
+			des_file_name=$OPTARG
+			;;
+		f)
+			src_file_name=$OPTARG
+			;;
+		u)
+			url=$OPTARG
+			;;
+	esac
+done
+
+if [ "$src_file_name" != "" ]; then
+	while IFS= read -r var
+	do
+		streamlink -o $path$des_file_name$count.mp4 --hls-segment-threads $thread_count $var $source_level
+		count=$((count + 1))
+	done < "$src_file_name"
+else
+	streamlink -o $path$des_file_name.mp4 --hls-segment-threads $thread_count $url $source_level
+fi
